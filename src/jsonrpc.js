@@ -49,11 +49,11 @@ export default class JsonRpc {
   /**
    * This will return the final data structure
    * for the transaction response from node
-   * 
+   *
    * @param {string} tx transaction hash
    * @param {Object} receipt transaction receipt
    * @param {Array} logs transaction logs
-   * @return {object} 
+   * @return {object}
    */
   static getTransactionFormat(transaction, receipt, logs) {
     const receiptResult = receipt;
@@ -64,7 +64,7 @@ export default class JsonRpc {
 
   /**
    * Formats Block and Logs into JSON file for output
-   * 
+   *
    * @param string tx
    * @param Object receipt
    * @param Array logs
@@ -101,9 +101,9 @@ export default class JsonRpc {
 
 
   /**
-   * scan transaction_receipt for queried addresses 
-   * and return a formatted object for output   
-   * 
+   * scan transaction_receipt for queried addresses
+   * and return a formatted object for output
+   *
    * @param {string} txn transaction hash
    * @returns {Object} formatted string
    */

@@ -65,11 +65,12 @@ const transactionHandler = async (transaction, addresses) => {
  * The main function that has the full steps
  */
 const main = async () => {
-  const { from, to, addresses, quickMode,
+  let { from, to, addresses, quickMode,
     lastBlockNumberFilePath, logLevel, blockConfirmations } = command();
   setLoggerLevel(logLevel);
   logger.debug('Start process');
 
+  addresses = addresses.split(',')
   addresses.forEach((address) => { if (!isAddress(address)) throw new Error(`Address ${address} is not a valid ethereum address`); });
   const promisifiedAbiObjects = addresses.map(async address => (
     { address, abi: await getABI(address) }
