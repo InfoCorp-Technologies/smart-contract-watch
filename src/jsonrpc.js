@@ -18,7 +18,7 @@ export const rpcErrorCatch = async (e) => {
 export default class JsonRpc {
   /**
    * @constructor
-   *
+   * 
    * @param {array} addresses queried addresses
    * @param {number} currentBlock starting/current block
    * @param {number} toBlock end block
@@ -37,7 +37,7 @@ export default class JsonRpc {
     this.getBlockAsync = bluebird.promisify(this.web3Instance.eth.getBlock);
     this.getTransactionReceiptAsync =
       bluebird.promisify(this.web3Instance.eth.getTransactionReceipt);
-//    this.getLogs = initCustomRPCs(this.web3Instance).getLogs;
+    this.getLogs = initCustomRPCs(this.web3Instance).getLogs;
     this.getLastBlockAsync = bluebird.promisify(this.web3Instance.eth.getBlockNumber);
     this.blockConfirmationOffset = blockConfirmationOffset;
     this.callback = callback;
@@ -49,11 +49,11 @@ export default class JsonRpc {
   /**
    * This will return the final data structure
    * for the transaction response from node
-   *
+   * 
    * @param {string} tx transaction hash
    * @param {Object} receipt transaction receipt
    * @param {Array} logs transaction logs
-   * @return {object}
+   * @return {object} 
    */
   static getTransactionFormat(transaction, receipt, logs) {
     const receiptResult = receipt;
@@ -64,7 +64,7 @@ export default class JsonRpc {
 
   /**
    * Formats Block and Logs into JSON file for output
-   *
+   * 
    * @param string tx
    * @param Object receipt
    * @param Array logs
@@ -101,9 +101,9 @@ export default class JsonRpc {
 
 
   /**
-   * scan transaction_receipt for queried addresses
-   * and return a formatted object for output
-   *
+   * scan transaction_receipt for queried addresses 
+   * and return a formatted object for output   
+   * 
    * @param {string} txn transaction hash
    * @returns {Object} formatted string
    */
@@ -170,15 +170,15 @@ export default class JsonRpc {
 
 
   /**
-   * gets all queried logs from the specified
+   * gets all queried logs from the specified 
    * one block at a time
-   *
-   * @returns {object} queried logs
+   * 
+   * @returns {object} queried logs 
    */
   async getLogsFromOneBlock() {
     const blockNumber = this.web3Instance.toHex(this.currentBlock);
     return this.addresses.map(address =>
-      this.web3Instance.eth.getPastLogs({
+      this.getLogs({
         address,
         fromBlock: blockNumber,
         toBlock: blockNumber,

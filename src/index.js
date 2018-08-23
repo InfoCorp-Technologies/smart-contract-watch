@@ -27,16 +27,17 @@ const addressAbiMap = {};
 const transactionHandler = async (transaction, addresses) => {
   let decodedLogs = [];
   let decodedInputDataResult;
-//  if (isContractCreationTransaction(transaction.to)) {
-//    try {
-//      decodedInputDataResult = addressAbiMap[transaction.creates || transaction.contractAddress]
-//        .decodeConstructor(transaction.input);
-//    } catch (error) {
-//      logError(error,
-//        `txHash: ${transaction.hash} ${error.message}`);
-//      return;
-//    }
-//  } else {
+  if (isContractCreationTransaction(transaction.to)) {
+    return;
+    //try {
+    //  decodedInputDataResult = addressAbiMap[transaction.contractAddress || transaction.creates]
+    //    .decodeConstructor(transaction.input);
+    //} catch (error) {
+    //  logError(error,
+    //    `txHash: ${transaction.hash} ${error.message}`);
+    //  return;
+    //}
+  } else {
     try {
       decodedInputDataResult = addressAbiMap[transaction.to].decodeMethod(transaction.input);
     } catch (error) {
@@ -56,7 +57,7 @@ const transactionHandler = async (transaction, addresses) => {
         `txHash: ${transaction.hash} ${error.message}`);
       return;
     }
-//  }
+  }
   output({ transaction, decodedInputDataResult, decodedLogs }, getCommandVars('outputType'));
 };
 
@@ -69,7 +70,6 @@ const main = async () => {
     lastBlockNumberFilePath, logLevel, blockConfirmations } = command();
   setLoggerLevel(logLevel);
   logger.debug('Start process');
-
   addresses = addresses.split(',')
   addresses.forEach((address) => { if (!isAddress(address)) throw new Error(`Address ${address} is not a valid ethereum address`); });
   const promisifiedAbiObjects = addresses.map(async address => (

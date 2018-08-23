@@ -1,4 +1,4 @@
-const Web3 = require("web3");
+import Web3 from 'web3';
 import { getCommandVars } from '../command';
 
 let web3;
@@ -9,7 +9,7 @@ export const getWeb3 = () => {
   } else {
     web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
   }
-  if (!web3.eth.net.isListening()) throw new Error(`Cannot connect to ${nodeUrl}`);
+  if (!web3.isConnected()) throw new Error(`Cannot connect to ${nodeUrl}`);
   return web3;
 };
 

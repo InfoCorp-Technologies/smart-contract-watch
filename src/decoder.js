@@ -1,6 +1,6 @@
-//import SolidityCoder from 'web3/lib/solidity/coder';
-const Web3 = require("web3");
-const Web3Utils = require("web3-utils");
+import SolidityCoder from 'web3/lib/solidity/coder';
+import sha3 from 'web3/lib/utils/sha3';
+import web3Utils from 'web3/lib/utils/utils';
 
 /**
  * This is based on Consynses ABI-decoder
@@ -21,7 +21,7 @@ export default class Decoder {
           this.methodIDs.constructor = abi;
           return this.methodIDs.constructor;
         } else if (abi.name) {
-          const signature = Web3Utils.sha3(`${abi.name}(${abi.inputs.map(input => input.type).join(',')})`);
+          const signature = sha3(`${abi.name}(${abi.inputs.map(input => input.type).join(',')})`);
           if (abi.type === 'event') {
             this.methodIDs[signature] = abi;
             return this.methodIDs[signature];
@@ -66,7 +66,7 @@ export default class Decoder {
         const params = abiItem.inputs.map(item => item.type);
         const constructorData =
           Decoder.extractConstructorFromBytecode(contractCreationBytecode, params);
-        const decoded = Web3.eth.abi.decodeParameters(params, constructorData);
+        const decoded = SolidityCoder.decodeParams(params, constructorData);
         return {
           name: abiItem.type,
           params: decoded.map((param, index) => {
@@ -92,8 +92,8 @@ export default class Decoder {
   static parseParams(param) {
     return Array.isArray(param) ?
       param.map(singleNumber =>
-        Web3Utils.toBigNumber(singleNumber).toString()) :
-      Web3Utils.toBigNumber(param).toString();
+        web3Utils.toBigNumber(singleNumber).toString()) :
+      web3Utils.toBigNumber(param).toString();
   }
   /**
    * Decode transaction input data
@@ -111,7 +111,7 @@ export default class Decoder {
     if (abiItem) {
       const params = abiItem.inputs.map(item => item.type);
 
-      const decoded = Web3.eth.abi.decodeParameters(params, inputData.slice(10));
+      const decoded = SolidityCoder.decodeParams(params, inputData.slice(10));
       return {
         name: abiItem.name,
         params: decoded.map((param, index) => {
@@ -168,7 +168,7 @@ export default class Decoder {
           }
           return dataTypes;
         });
-        const decodedData = Web3.eth.abi.decodeParameters(dataTypes, logData.slice(2));
+        const decodedData = SolidityCoder.decodeParams(dataTypes, logData.slice(2));
         // Loop topic and data to get the params
         method.inputs.forEach((param) => {
           const decodedParam = {
@@ -185,10 +185,10 @@ export default class Decoder {
           }
 
           if (param.type === 'address') {
-            decodedParam.value = Decoder.padZeros(Web3Utils.toBigNumber(decodedParam.value)
+            decodedParam.value = Decoder.padZeros(web3Utils.toBigNumber(decodedParam.value)
               .toString(16));
           } else if (param.type === 'uint256' || param.type === 'uint8' || param.type === 'int') {
-            decodedParam.value = Web3Utils.toBigNumber(decodedParam.value).toString(10);
+            decodedParam.value = web3Utils.toBigNumber(decodedParam.value).toString(10);
           }
 
           decodedParameters.push(decodedParam);
@@ -221,19 +221,17 @@ export default class Decoder {
     const bzzrtOffset = 82;
     const endofByteCode = 4;
 
-
-    throw new Error('research how to implement getSolidityTypes');
-    //const solidityTypes = SolidityCoder.getSolidityTypes(params);
+    const solidityTypes = SolidityCoder.getSolidityTypes(params);
 
 
     const offset = contractCreationBytecode.indexOf(endOfBytCodeSig);
     if (contractCreationBytecode.slice(offset + bzzrtOffset,
       offset + bzzrtOffset + 4) !== '0029') {
-      /* solidityTypes.forEach((solidityType, i) => {
+      solidityTypes.forEach((solidityType, i) => {
         if (solidityType.isDynamicType(params[i]) ||
           solidityType.isDynamicArray(params[i]) ||
             solidityType.isStaticArray(params[i])) { throw new Error('Dynamic types found in a ByteCode file with no "Metadata swarm"'); }
-      }); */
+      });
       return contractCreationBytecode.slice(-64 * params.length);
     }
     return contractCreationBytecode.slice(offset + bzzrtOffset + endofByteCode);
