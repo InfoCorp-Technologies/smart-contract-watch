@@ -60,7 +60,8 @@ export default class Decoder {
    */
   decodeConstructor(contractCreationBytecode) {
     try {
-      if (this.methodIDs.constructor.type !== 'constructor') throw new Error(`Expected constructor got${this.methodIDs.constructor.type}`);
+      //if (this.methodIDs.constructor.type !== 'constructor') throw new Error(`Expected constructor got${this.methodIDs.constructor.type}`);
+      if (this.methodIDs.constructor.type !== 'constructor') return this.decodeMethod(contractCreationBytecode);
       const abiItem = this.methodIDs.constructor;
       if (abiItem) {
         const params = abiItem.inputs.map(item => item.type);

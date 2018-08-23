@@ -1,4 +1,9 @@
-from: 2607801
-to: 4240720
+from: 12958
+to: 12991
+nodeUrl: "http://localhost:8545"
+outputType: "graylog"
+logLevel: "info"
+quick: false
 addresses:
- - "0xa74476443119a942de498590fe1f2454d7d4ac0d"
+  - "0xfd8e282e7f980338DEB2c240b12C8A7DA51db469"
+  - "0xeB0a2BE5d84F803dF445884b18cc47645fea7DDa"
