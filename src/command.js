@@ -103,7 +103,6 @@ export default (watchPath) => {
   const watchConfigPath = watchPath || watchingConfigPath;
   const watchConfig = fs.existsSync(watchConfigPath) ? YAML.load(watchConfigPath) : {};
 
-
   if (program.options.length === 0) {
     program
       .version('0.1.0')
@@ -126,10 +125,12 @@ export default (watchPath) => {
   const blockConfirmations = !isNaN(parseParamToNumStrict(program.blockConfirmations)) ?
     parseParamToNumStrict(program.blockConfirmations) : null;
 
+  const address = typeof program.addresses == 'string' ? list(program.addresses) : program.addresses;
+
   return {
     from: validateBlockByNumber(from, program.to),
     to: program.to,
-    addresses: validateParamter(program.addresses, addressErrorMsg),
+    addresses: validateParamter(address, addressErrorMsg),
     quickMode: validateBool(program.quick, quickModeErrorMsg),
     lastBlockNumberFilePath: saveState,
     nodeUrl: validateParamter(program.nodeUrl, rpcErrorMsg),
